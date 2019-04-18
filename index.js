@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 const express = require('express');
 const app = express();
@@ -9,11 +10,19 @@ app.get('/position', function(req, res) {
 });
 
 app.post('/position/:state', function(req, res) {
-   res.send(blinds.setTarget(req.params.state));
+   res.status(204).send(blinds.setTarget(req.params.state));
 });
 
 app.get('/state', function(req, res) {
    res.send(blinds.state.toString());
+});
+
+app.post('/debug/:state', function(req, res) {
+   res.status(204).send(blinds.setDebug(req.params.state));
+});
+
+app.post('/debug2/open/:time', function(req, res) {
+   res.status(204).send(blinds.setDebugOpen(req.params.time));
 });
 
 // Start the Express server

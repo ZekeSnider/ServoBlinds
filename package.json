@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "node-persist": "^3.0.4",
     "pigpio": "^1.2.2"
   }
 }

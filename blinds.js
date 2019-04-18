@@ -1,13 +1,15 @@
 "use strict";
 const os = require('os');
+var fs = require("fs");
 
 function isDarwin() {
     return os.platform() === 'darwin';
 }
 
+var Gpio;
 // avoid mocking gpio pins if we're running on macOS
 if (!isDarwin()) {
-    const Gpio = require('pigpio').Gpio;
+    Gpio = require('pigpio').Gpio;
 }
 
 const states = {
@@ -17,22 +19,22 @@ const states = {
 }
 
 const servoStates = {
-    CLOSING: 0,
-    OPENING: 500,
-    IDLING:  2500,
+    CLOSING: 1000,
+    OPENING: 2000,
+    IDLING:  1500,
 }
 
-const msWidth = 10000;
+const msWidth = 2800;
 const msPerPercentage = (msWidth/100);
 
 class Blinds {
     constructor() {
         if (!isDarwin()) {
-            this.motor = new Gpio(10, {mode: Gpio.OUTPUT});
+            this.motor = new Gpio(17, {mode: Gpio.OUTPUT});
         }
         this.currentValue = 0;
+        this.targetValue = this.currentValue;
         this.state = states.IDLING;
-        this.targetValue = 0;
         this.servoControlLoop();
     }
 
@@ -52,20 +54,33 @@ class Blinds {
         switch(this.state) {
           case states.CLOSING:
             if (!isDarwin()) {
-                motor.servoWrite(servoStates.CLOSING)
+                this.motor.servoWrite(servoStates.CLOSING)
+                console.log(servoStates.CLOSING);
             }
             break;
           case states.OPENING:
             if (!isDarwin()) {
-                motor.servoWrite(servoStates.OPENING);
+                this.motor.servoWrite(servoStates.OPENING);
+                console.log(servoStates.OPENING);
             }
             break;
           case states.IDLING:
            if (!isDarwin()) {
-                motor.servoWrite(servoStates.IDLING);
+                this.motor.servoWrite(servoStates.IDLING);
+                console.log(servoStates.IDLING);
             }
             break;
         }
+    }
+
+    setDebug(newState) {
+        this.motor.servoWrite(parseInt(newState));
+    }
+
+    async setDebugOpen(newState) {
+        this.motor.servoWrite(parseInt(servoStates.CLOSING));
+        await this.sleep(parseInt(newState));
+        this.motor.servoWrite(parseInt(servoStates.IDLING));
     }
 
     // Get what direction the servo should be
