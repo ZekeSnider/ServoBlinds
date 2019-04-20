@@ -1,0 +1,9 @@
+{
+	"msWidth": 2800,
+	"gpioPin": 17,
+	"servoStates": {
+		"CLOSING": 1000,
+		"OPENING": 2000,
+		"IDLING":  1500
+	}
+}

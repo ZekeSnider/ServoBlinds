@@ -1,0 +1,7 @@
+{
+    "accessory": "MinimalisticHttpBlinds",
+    "name": "Bedroom Blinds",
+    "get_current_position_url": "http://localhost:3000/position/",
+    "set_target_position_url": "http://localhost:3000/position/%position%",
+    "get_current_state_url": "http://localhost:3000/state/"
+}

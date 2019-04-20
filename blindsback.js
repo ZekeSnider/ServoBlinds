@@ -1,13 +1,12 @@
 "use strict";
-const config = require('./config.json');
 const os = require('os');
 var fs = require("fs");
-var Gpio;
 
 function isDarwin() {
     return os.platform() === 'darwin';
 }
 
+var Gpio;
 // avoid mocking gpio pins if we're running on macOS
 if (!isDarwin()) {
     Gpio = require('pigpio').Gpio;
@@ -19,15 +18,23 @@ const states = {
     IDLING:  2,
 }
 
+const servoStates = {
+    CLOSING: 1000,
+    OPENING: 2000,
+    IDLING:  1500,
+}
+
+const msWidth = 2800;
+const msPerPercentage = (msWidth/100);
+
 class Blinds {
     constructor() {
         if (!isDarwin()) {
-            this.motor = new Gpio(config.gpioPin, {mode: Gpio.OUTPUT});
+            this.motor = new Gpio(17, {mode: Gpio.OUTPUT});
         }
         this.currentValue = 0;
         this.targetValue = this.currentValue;
         this.state = states.IDLING;
-        this.msPerPercentage = (config.msWidth/100);
         this.servoControlLoop();
     }
 
@@ -47,20 +54,20 @@ class Blinds {
         switch(this.state) {
           case states.CLOSING:
             if (!isDarwin()) {
-                this.motor.servoWrite(config.servoStates.CLOSING)
-                console.log(config.servoStates.CLOSING);
+                this.motor.servoWrite(servoStates.CLOSING)
+                console.log(servoStates.CLOSING);
             }
             break;
           case states.OPENING:
             if (!isDarwin()) {
-                this.motor.servoWrite(config.servoStates.OPENING);
-                console.log(config.servoStates.OPENING);
+                this.motor.servoWrite(servoStates.OPENING);
+                console.log(servoStates.OPENING);
             }
             break;
           case states.IDLING:
            if (!isDarwin()) {
-                this.motor.servoWrite(config.servoStates.IDLING);
-                console.log(config.servoStates.IDLING);
+                this.motor.servoWrite(servoStates.IDLING);
+                console.log(servoStates.IDLING);
             }
             break;
         }
@@ -71,9 +78,9 @@ class Blinds {
     }
 
     async setDebugOpen(newState) {
-        this.motor.servoWrite(parseInt(config.servoStates.CLOSING));
+        this.motor.servoWrite(parseInt(servoStates.CLOSING));
         await this.sleep(parseInt(newState));
-        this.motor.servoWrite(parseInt(config.servoStates.IDLING));
+        this.motor.servoWrite(parseInt(servoStates.IDLING));
     }
 
     // Get what direction the servo should be
@@ -114,7 +121,7 @@ class Blinds {
 
         // wait for the servo to potentially move 1%
         // (this is our update interval.)
-        await this.sleep(this.msPerPercentage);
+        await this.sleep(msPerPercentage);
         this.servoControlLoop();
     }
 }
