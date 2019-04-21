@@ -66,20 +66,9 @@ class Blinds {
         }
     }
 
-    setDebug(newState) {
-        this.motor.servoWrite(parseInt(newState));
-    }
-
-    async setDebugOpen(newState) {
-        this.motor.servoWrite(parseInt(config.servoStates.CLOSING));
-        await this.sleep(parseInt(newState));
-        this.motor.servoWrite(parseInt(config.servoStates.IDLING));
-    }
-
     // Get what direction the servo should be
     // turning to reach its target
     targetDirection() {
-        // console.log(`current value: ${this.currentValue} ${typeof this.currentValue}, target; ${this.targetValue} ${typeof this.targetValue}`);
         if (this.currentValue === this.targetValue) {
             return states.IDLING;
         } else if (this.currentValue >= this.targetValue) {
@@ -116,6 +105,24 @@ class Blinds {
         // (this is our update interval.)
         await this.sleep(this.msPerPercentage);
         this.servoControlLoop();
+    }
+
+    async setDebugState(newState) {
+        // Don't action if the servo is currently moving
+        if (this.state !== states.IDLING) {
+            return
+        }
+        
+        // Set the state of the motor
+        if (newState === "open") {
+            this.motor.servoWrite(parseInt(config.servoStates.OPENING));
+        } else if (newState === "close") {
+            this.motor.servoWrite(parseInt(config.servoStates.CLOSING));
+        }
+
+        // Move for 1/2 a second, then go back to idle
+        await this.sleep(parseInt(500));
+        this.motor.servoWrite(parseInt(config.servoStates.IDLING));
     }
 }
 

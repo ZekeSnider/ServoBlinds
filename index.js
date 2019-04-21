@@ -3,6 +3,7 @@
 const express = require('express');
 const app = express();
 const Blinds = require('./blinds');
+const Validator = require('./requestValidator.js');
 let blinds = new Blinds();
 
 app.get('/position', function(req, res) {
@@ -10,7 +11,11 @@ app.get('/position', function(req, res) {
 });
 
 app.post('/position/:state', function(req, res) {
-   res.status(204).send(blinds.setTarget(req.params.state));
+   if (Validator.validateTarget(req.params.state)) {
+     res.status(204).send(blinds.setTarget(req.params.state));
+   } else {
+   	 res.status(400).send();
+   }
 });
 
 app.get('/state', function(req, res) {
@@ -18,11 +23,11 @@ app.get('/state', function(req, res) {
 });
 
 app.post('/debug/:state', function(req, res) {
-   res.status(204).send(blinds.setDebug(req.params.state));
-});
-
-app.post('/debug2/open/:time', function(req, res) {
-   res.status(204).send(blinds.setDebugOpen(req.params.time));
+   if (Validator.validateDebugState(req.params.state)) {
+   	 res.status(204).send(blinds.setDebugState(req.params.state));
+   } else {
+   	 res.status(400).send()
+   }
 });
 
 // Start the Express server
