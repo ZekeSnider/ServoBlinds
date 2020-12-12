@@ -1,9 +1,14 @@
-{
-	"msWidth": 2800,
-	"gpioPin": 17,
-	"servoStates": {
-		"CLOSING": 1000,
-		"OPENING": 2000,
-		"IDLING":  1500
-	}
-}
+[
+	{
+		"type": "blinds",
+		"name": "blinds",
+		"msWidth": 2800,
+		"gpioPin": 10,
+		"servoStates": {
+			"CLOSING": 2000,
+			"OPENING": 1000,
+			"IDLING":  1500
+		}
+	},
+]
+

@@ -1,5 +1,5 @@
 "use strict";
-const config = require('./config.json');
+var config = {}
 const os = require('os');
 var fs = require("fs");
 var Gpio;
@@ -20,7 +20,8 @@ const states = {
 }
 
 class Blinds {
-    constructor() {
+    constructor(inConfig) {
+        config = inConfig;
         if (!isDarwin()) {
             this.motor = new Gpio(config.gpioPin, {mode: Gpio.OUTPUT});
         }
@@ -116,7 +117,7 @@ class Blinds {
         // Set the state of the motor
         if (newState === "open") {
             this.motor.servoWrite(parseInt(config.servoStates.OPENING));
-        } else if (newState === "close") {
+        } else if (newState === "closed") {
             this.motor.servoWrite(parseInt(config.servoStates.CLOSING));
         }
 
