@@ -55,7 +55,7 @@ app.get('/:name/state', function(req, res) {
 
 app.post('/:name/debug/:state', function(req, res) {
    if (!Validator.isValidBlind(objects[req.params.name])) {
-      return res.status(400).send();
+      return res.status(400).send("Invalid name");
    }
 
    if (Validator.validateDebugState(req.params.state)) {
