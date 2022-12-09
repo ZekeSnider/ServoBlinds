@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "node-persist": "^3.0.4",
     "pigpio": "^1.2.2"
   }
